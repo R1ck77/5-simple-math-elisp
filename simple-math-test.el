@@ -29,4 +29,15 @@
           (simple-math)
           (expect (buffer-substring (point-min) (point-max))
                   :to-equal expected-result)
-          (expect (point) :to-be (+ (length expected-result) 1)))))))
+          (expect (point) :to-be (+ (length expected-result) 1)))))
+    (it "discards the negative values returned"
+      (let ((expected-result "10 + 5 = 15
+10 - 5 = 5
+10 * 5 = 50
+10 / 5 = 2"))
+        (with-temp-buffer
+          (spy-on 'read-number :and-call-fake (create-fake-read-number '(-1 -2 -3.3 10 -72.3 -8.5 5)))
+          (simple-math)
+          (expect (buffer-substring (point-min) (point-max))
+                  :to-equal expected-result)
+          (expect (point) :to-be (+ (length expected-result) 1)))))    ))
