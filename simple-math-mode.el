@@ -10,16 +10,32 @@
 (defvar simple-math-mode-map nil
   "Keymap for the \"Simple Math\" exercise")
 
+(defvar simple-math-first-value 1)
+(make-variable-buffer-local 'simple-math-first-value)
+(defvar simple-math-second-value 1)
+(make-variable-buffer-local 'simple-math-second-value)
+
 (defun smm-quit ()
   (interactive)
   (if (eq major-mode 'simple-math-mode)
       (kill-buffer)))
 
+(defun smm--update-buffer ()
+  (erase-buffer)
+  (sm--print-simple-math-results (list simple-math-first-value
+                                       simple-math-second-value)))
+
 (defun smm-read-first-number ()
-  (interactive))
+  (interactive)
+  (when (eq major-mode 'simple-math-mode)
+    (setq simple-math-first-value (sm--read-first-number))
+    (smm--update-buffer)))
 
 (defun smm-read-second-number ()
-  (interactive))
+  (interactive)
+  (when (eq major-mode 'simple-math-mode)
+    (setq simple-math-second-value (sm--read-second-number))
+    (smm--update-buffer)))
 
 (unless simple-math-mode-map
   (setq simple-math-mode-map (make-sparse-keymap))
@@ -27,17 +43,12 @@
   (define-key simple-math-mode-map "2" 'smm-read-second-number)
   (define-key simple-math-mode-map "q" 'smm-quit))
 
-(defun smm--update-buffer (a b)
-  (erase-buffer)
-  (insert "1 + 1 = 2
-1 - 1 = 0
-1 * 1 = 1
-1 / 1 = 1"))
-
 (defun smm--setup ()
   (font-lock-mode)
   (use-local-map simple-math-mode-map)
-  (smm--update-buffer 1 1))
+  (setq simple-math-first-value 1)
+  (setq simple-math-second-value 1)
+  (smm--update-buffer))
 
 (defun simple-math-mode ()
   "Interactive version of the \"Simple Math\" exercise"

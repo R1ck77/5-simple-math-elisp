@@ -41,16 +41,24 @@
         (sm--read-number prompt)
       number)))
 
+(defun sm--read-second-number ()
+  (sm--read-number "Second number: "))
+
+(defun sm--read-first-number ()
+  (sm--read-number "First number: "))
+
 (defun sm--read-numbers ()
-  (list (sm--read-number "First number: ")
-        (sm--read-number "Second number: ")))
+  (list (sm--read-first-number)
+        (sm--read-second-number)))
+
+(defun sm--print-simple-math-results (values)
+  (insert
+   (sm--merge-strings
+    (sm--represent-result (apply 'format "%g %%s %g = %%g" values)
+                          (sm--operations-results values)))))
 
 (defun simple-math ()
   (interactive)
-  (let ((values (sm--read-numbers)))
-   (insert
-    (sm--merge-strings
-     (sm--represent-result (apply 'format "%g %%s %g = %%g" values)
-                           (sm--operations-results values))))))
+  (sm--print-simple-math-results (sm--read-numbers)))
 
 (provide 'simple-math)
