@@ -4,7 +4,7 @@
 
 (defconst expected-mode-name "*Interactive Simple Math*")
 
-(describe "Simple Math Mode"
+(describe "simple-math-mode.el"
   (describe "simple-math-mode"
     (it "turns the current buffer to the specified mode"
       (with-temp-buffer
@@ -37,4 +37,36 @@
             (let ((second-buffer (current-buffer)))
               (smm-quit)
               (expect (buffer-live-p second-buffer) :not :to-be t)
-              (expect (buffer-live-p first-buffer) :to-be t))))))))
+              (expect (buffer-live-p first-buffer) :to-be t)))))))
+  (describe "smm-read-first-number"
+    (it "will do nothing on the wrong buffer"
+      (spy-on 'read-number)
+      (smm-read-first-number)
+      (expect 'read-number :not :to-have-been-called))
+    (it "will make the current content change"
+      (with-temp-buffer
+        (simple-math-mode)
+        (spy-on 'read-number :and-return-value 12)
+        (smm-read-first-number)
+        (expect 'read-number :to-have-been-called)
+        (expect (buffer-substring (point-min) (point-max))
+                :to-equal "12 + 1 = 13
+12 - 1 = 11
+12 * 1 = 12
+12 / 1 = 12"))))
+  (describe "smm-read-second-number"
+    (it "will do nothing on the wrong buffer"
+      (spy-on 'read-number)
+      (smm-read-second-number)
+      (expect 'read-number :not :to-have-been-called)))
+    (it "will make the current content change"
+      (with-temp-buffer
+        (simple-math-mode)
+        (spy-on 'read-number :and-return-value 12.0)
+        (smm-read-second-number)
+        (expect 'read-number :to-have-been-called)
+        (expect (buffer-substring (point-min) (point-max))
+                :to-equal "1 + 12 = 13
+1 - 12 = -11
+1 * 12 = 12
+1 / 12 = 0.0833333"))))
