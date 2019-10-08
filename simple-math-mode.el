@@ -1,3 +1,4 @@
+(setq load-path (cons "." load-path))
 (require 'simple-math)
 
 (defconst smm--buffer-name "*Interactive Simple Math*"
