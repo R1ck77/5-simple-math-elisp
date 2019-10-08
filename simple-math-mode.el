@@ -11,7 +11,8 @@
 
 (defun smm-quit ()
   (interactive)
-  (kill-buffer))
+  (if (eq major-mode 'simple-math-mode)
+      (kill-buffer)))
 
 (defun smm-read-first-number ()
   (interactive))
